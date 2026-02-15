@@ -25,6 +25,15 @@ function EditProfile() {
             fieldOfStudy: "",
         }
     )
+    const [experience, Setexperience] = useState(UserData.experience || [])
+    const [newexperience, Setnewexperience] = useState(
+        {
+            title: "",
+            company: "",
+            description: "",
+        }
+    )
+
 
     function AddSkill(e) {
         e.preventDefault()
@@ -39,6 +48,43 @@ function EditProfile() {
             Setskills(skills.filter((s) => s !== skill))
         }
     }
+
+    function AddEducation(e) {
+        e.preventDefault()
+        if (neweducation.college && neweducation.degree && neweducation.fieldOfStudy) {
+            Seteducation([...education, neweducation])
+        }
+        Setneweducation({
+            college: "",
+            degree: "",
+            fieldOfStudy: "",
+        })
+    }
+
+    function RemoveEducation(edu) {
+        if (education.includes(edu)) {
+            Seteducation(education.filter((e) => e !== edu))
+        }
+    }
+
+    function AddExperience(e) {
+        e.preventDefault()
+        if (newexperience.title && newexperience.company && newexperience.description) {
+            Setexperience([...experience, newexperience])
+        }
+        Setnewexperience({
+            title: "",
+            company: "",
+            description: "",
+        })
+    }
+
+    function RemoveExperience(exp) {
+        if (experience.includes(exp)) {
+            Setexperience(experience.filter((e) => e !== exp))
+        }
+    }
+
 
     return (
         <div className="w-full h-[100vh] fixed top-0 z-[100] flex items-center justify-center ">
@@ -86,27 +132,55 @@ function EditProfile() {
                         {
                             education && <div className="flex flex-col gap-4">
                                 {education.map((edu, index) => (
-                                    <div className="bg-gray-200  flex  justify-between items-center border-gray-600 w-full h-[40px] border-2 text-black p-[10px] " key={index}>
+                                    <div className="bg-gray-200  flex  justify-between items-center border-gray-600 w-full  border-2 text-black p-[10px] " key={index}>
                                         <div>
                                             <div>College : {edu.college}</div>
                                             <div>Degree : {edu.degree}</div>
                                             <div>Field of Study : {edu.fieldOfStudy}</div>
                                         </div>
-                                        <ImCross className="font-bold cursor-pointer text-gray-700" />
+                                        <ImCross onClick={() => { RemoveEducation(edu) }} className="font-bold cursor-pointer text-gray-700" />
 
                                     </div>
                                 ))}
                             </div>
                         }
                         <div className="flex flex-col gap-[10px]">
-                            <input type="text" placeholder="Ex : Bostan University" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" value={neweducation.college} onChange={(e) => { Setneweducation({ ...neweducation, college: e.target.value }) }} />
-                            <input type="text" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" name="" id="" value={neweducation.degree} onChange={(e) => { Setneweducation({ ...neweducation, degree: e.target.value }) }} placeholder="Ex : BTech" />
-                            <input type="text" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" name="" id="" value={neweducation.fieldOfStudy} onChange={(e) => { Setneweducation({ ...neweducation, fieldOfStudy: e.target.value }) }} placeholder="Ex : Business" />
-                            <button className="w-[100%] h-[40px] rounded-full border-2 border-[#2ddcff] bg-[#2ddcff] text-white cursor-pointer" >Add</button>
+                            <input type="text" placeholder="College" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" value={neweducation.college} onChange={(e) => { Setneweducation({ ...neweducation, college: e.target.value }) }} />
+                            <input type="text" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" name="" id="" value={neweducation.degree} onChange={(e) => { Setneweducation({ ...neweducation, degree: e.target.value }) }} placeholder="Degree" />
+                            <input type="text" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" name="" id="" value={neweducation.fieldOfStudy} onChange={(e) => { Setneweducation({ ...neweducation, fieldOfStudy: e.target.value }) }} placeholder="Field of Study" />
+                            <button className="w-[100%] h-[40px] rounded-full border-2 border-[#2ddcff] bg-[#2ddcff] text-white cursor-pointer" onClick={AddEducation} >Add</button>
+                        </div>
+                    </div>
+
+                    <div className="w-full mt-[20px] p-[10px] border-2 border-gray-600 flex flex-col gap-[10px] rounded-lg">
+                        <h1 className="text-[19px] font-bold">Experience</h1>
+                        {
+                            experience && <div className="flex flex-col gap-4">
+                                {experience.map((exp, index) => (
+                                    <div className="bg-gray-200  flex  justify-between items-center border-gray-600 w-full  border-2 text-black p-[10px] " key={index}>
+                                        <div>
+                                            <div>Title : {exp.title}</div>
+                                            <div>Company : {exp.company}</div>
+                                            <div className="" >Discription : {exp.description}</div>
+                                        </div>
+                                        <ImCross onClick={() => { RemoveExperience(exp) }} className="font-bold cursor-pointer text-gray-700" />
+
+                                    </div>
+                                ))}
+                            </div>
+                        }
+                        <div className="flex flex-col gap-[10px]">
+                            <input type="text" placeholder="Title" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" value={newexperience.title} onChange={(e) => { Setnewexperience({ ...newexperience, title: e.target.value }) }} />
+                            <input type="text" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" name="" id="" value={newexperience.company} onChange={(e) => { Setnewexperience({ ...newexperience, company: e.target.value }) }} placeholder="Company" />
+                            <text type="text" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" name="" id="" value={newexperience.description} onChange={(e) => { Setnewexperience({ ...newexperience, description: e.target.value }) }} placeholder="Discription" />
+                            <button className="w-[100%] h-[40px] rounded-full border-2 border-[#2ddcff] bg-[#2ddcff] text-white cursor-pointer" onClick={AddExperience} >Add</button>
                         </div>
                     </div>
 
                 </div>
+
+                <button className="w-[100%] mt-[50px] h-[40px] rounded-full border-2 text-white bg-[#2ddcff] cursor-pointer">Save Profile</button>
+
             </div>
         </div>
     )

@@ -14,4 +14,6 @@ const getCurrentUser = async (req, res) => {
     }
 }
 
+
+
 export default getCurrentUser

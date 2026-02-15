@@ -32,7 +32,7 @@ function Navbar() {
 
     return (
         <>
-            <div className="w-full h-[80px] bg-white top-0 fixed shadow-lg flex items-center justify-between md:justify-around px-[10px]">
+            <div className="w-full h-[80px] bg-white top-0 left-0 z-[80] fixed shadow-lg flex items-center justify-between md:justify-around px-[10px]">
 
                 <div className="flex justify-center items-center gap-[10px]">
                     <div onClick={() => {
