@@ -49,9 +49,9 @@ function Navbar() {
 
                 <div className="flex items-center justify-center gap-[20px] relative">
 
-                    {popup && <div className="w-[300px] min-h-[300px] bg-white shadow-lg absolute top-[75px] rounded-lg flex flex-col items-center p-[20px] gap-[15px]">
+                    {popup && <div className="w-[300px] min-h-[300px] bg-white shadow-lg absolute top-[75px] rounded-lg flex justify-center flex-col items-center p-[20px] gap-[15px]">
                         <div className="w-[70px] h-[70px] rounded-full overflow-hidden">
-                            <img className="w-full h-full" src={profile} alt="" />
+                            <img className="w-full h-full" src={UserData.profileImage || profile} alt="" />
                         </div>
                         <div className="text-[18px] font-semibold text-gray-700">
                             {UserData?.firstName} {UserData?.lastName}
@@ -83,7 +83,7 @@ function Navbar() {
                     <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
                         <img onClick={() => {
                             Setpopup(prev => !prev)
-                        }} className="w-full h-full cursor-pointer" src={profile} alt="" />
+                        }} className="w-full h-full cursor-pointer" src={UserData.profileImage || profile} alt="" />
                     </div>
                 </div>
 
