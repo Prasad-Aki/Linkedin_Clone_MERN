@@ -231,14 +231,14 @@ function EditProfile() {
                         <div className="flex flex-col gap-[10px]">
                             <input type="text" placeholder="Title" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" value={newexperience.title} onChange={(e) => { Setnewexperience({ ...newexperience, title: e.target.value }) }} />
                             <input type="text" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" name="" id="" value={newexperience.company} onChange={(e) => { Setnewexperience({ ...newexperience, company: e.target.value }) }} placeholder="Company" />
-                            <text type="text" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" name="" id="" value={newexperience.description} onChange={(e) => { Setnewexperience({ ...newexperience, description: e.target.value }) }} placeholder="Discription" />
+                            <input type="text" className="w-full h-[40px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" name="" id="" value={newexperience.description} onChange={(e) => { Setnewexperience({ ...newexperience, description: e.target.value }) }} placeholder="Discription" />
                             <button className="w-[100%] h-[40px] rounded-full border-2 border-[#2ddcff] bg-[#2ddcff] text-white cursor-pointer" onClick={AddExperience} >Add</button>
                         </div>
                     </div>
 
                 </div>
 
-                <button className="w-[100%] mt-[50px] h-[40px] rounded-full border-2 text-white bg-[#2ddcff] cursor-pointer" onClick={() => { handelSaveProfile() }}>Save Profile</button>
+                <button className="w-[100%] mt-[50px] h-[40px] rounded-full border-2 text-white bg-[#2ddcff] cursor-pointer" onClick={() => { handelSaveProfile(), Setedit(false) }}>Save Profile</button>
 
             </div>
         </div>
