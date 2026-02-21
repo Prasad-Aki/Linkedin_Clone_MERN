@@ -142,7 +142,7 @@ function EditProfile() {
     }
 
     return (
-        <div className="w-full h-[100vh] fixed top-0 z-[100] flex items-center justify-center ">
+        <div className="w-full h-[100vh] fixed left-0 top-0 z-[100] flex items-center justify-center ">
 
             <input type="file" accept="image/*" hidden ref={profileImage} onChange={handleProfileImage} />
             <input type="file" accept="image/*" hidden ref={coverImage} onChange={handlecoverImage} />
@@ -158,7 +158,6 @@ function EditProfile() {
                 <div className="w-[80px] h-[80px] ml-[20px] rounded-full overflow-hidden absolute top-[150px]" onClick={() => { profileImage.current.click() }}>
                     <img className="w-full h-full" src={frontendProfileImage} alt="" />
                 </div>
-                <div className="w-[20px] h-[20px] cursor-pointer bg-[#17c1ff] absolute text-white top-[180px] left-[90px] rounded-full flex justify-center items-center"><FaPlus /></div>
 
                 <div className="w-full flex flex-col items-center justify-center mt-[50px] gap-[20px]" >
                     <input type="text" name="" id="" placeholder="firstName" className="w-full h-[50px] outline-none border-gray-600 border-2 px-[10px] rounded-lg" value={firstName} onChange={(e) => { SetfirstName(e.target.value) }} />

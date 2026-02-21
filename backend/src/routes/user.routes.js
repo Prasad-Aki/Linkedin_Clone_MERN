@@ -11,4 +11,5 @@ userRouter.put("/updateprofile", isAuth, Upload.fields([
     { name: "coverImage", maxCount: 1 }
 ]), UpdateProfile)
 
+
 export default userRouter
