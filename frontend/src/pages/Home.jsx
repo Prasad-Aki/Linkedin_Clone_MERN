@@ -10,9 +10,10 @@ import { ImCross } from "react-icons/im"
 import { FaRegImage } from "react-icons/fa6"
 import axios from "axios"
 import { AuthDatacontext } from "../contexts/Authcontext.jsx"
+import Post from "../components/Post.jsx"
 
 function Home() {
-    const { UserData, SetUserData, edit, Setedit } = useContext(userDataContext)
+    const { UserData, SetUserData, edit, Setedit, postData, SetpostData } = useContext(userDataContext)
     const { serverurl } = useContext(AuthDatacontext)
     const [discription, Setdescription] = useState("")
     const [frontend, Setfrontend] = useState("")
@@ -33,9 +34,10 @@ function Home() {
             fromdata.append("discription", discription)
             if (backend) {
                 fromdata.append("image", backend)
-                const result = await axios.post(serverurl + "/api/post/createpost", fromdata, { withCredentials: true })
-                console.log(result)
             }
+            const result = await axios.post(serverurl + "/api/post/create", fromdata, { withCredentials: true })
+            console.log(result)
+
         } catch (error) {
             console.log(error)
         }
@@ -61,18 +63,33 @@ function Home() {
                     <div className=" pl-[20px] text-[15px]  text-gray-500">{UserData.location}</div>
                     <button className="w-[100%] h-[40px] mt-[10px] my-[20px] flex items-center justify-center gap-[20px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] cursor-pointer" onClick={() => { Setedit(true) }}>Edit Profile <FaPencilAlt />
                     </button>
+
                 </div>
 
-                <div className="lg:w-[50%] w-full min-h-[200px] shadow-lg">
+                <div className="lg:w-[50%] w-full min-h-[200px] flex flex-col gap-[20px]">
                     <div className=" w-full h-[120px] p-[10px] rounded-lg flex items-center justify-center bg-white shadow-lg gap-7">
                         <div className="w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center">
                             <img className="h-full" src={UserData.profileImage || profile} alt="" />
                         </div>
                         <button className="h-[50px] w-[65%] rounded-full border-2  border-2 cursor-pointer flex items-center justify-start px-[20px] hover:bg-gray-200" onClick={() => { SetuploadPost(true) }}>Start a Post</button>
                     </div>
+                    <div className="border-1 text-gray-600"></div>
+
+                    {postData && postData.map((post, index) => (
+                        <Post
+                            key={index}
+                            id={post._id}
+                            image={post.image}
+                            discription={post.discription}
+                            author={post.author}
+                            like={post.like}
+                            comment={post.comment}
+                        />
+                    ))}
                 </div>
 
                 <div className="lg:w-[25%] w-full min-h-[200px] bg-white shadow-lg">
+
                 </div>
 
                 {uploadPost && <div className="w-full h-full left-0 bottom-0 right-0 bg-black opacity-[0.5] absolute flex items-center justify-center top-0 z-[100px]">
@@ -103,6 +120,7 @@ function Home() {
                     <div className="w-[95%] mt-[25px] border-1 ml-[12px]"></div>
                     <div className="flex  w-full px-[20px] mt-[15px] justify-end items-center ">
                         <button className="h-[50px] w-[100px]  rounded-full border-2 mb-5 text-white bg-[#2ddcff] cursor-pointer" onClick={handelUploadPOst}>Post</button>
+
                     </div>
                 </div>}
 
