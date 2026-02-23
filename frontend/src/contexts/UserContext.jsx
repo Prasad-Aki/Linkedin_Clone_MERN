@@ -39,7 +39,7 @@ function UserContext({ children }) {
         getpostData()
     }, [])
 
-    const value = { UserData, SetUserData, edit, Setedit, postData, SetpostData }
+    const value = { UserData, SetUserData, edit, Setedit, postData, SetpostData }   
     return (
         <>
             <userDataContext.Provider value={value}>

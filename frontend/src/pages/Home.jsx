@@ -27,6 +27,7 @@ function Home() {
         Setbackend(file)
         Setfrontend(URL.createObjectURL(file))
     }
+    console.log(serverurl)
 
     const handelUploadPOst = async () => {
         try {

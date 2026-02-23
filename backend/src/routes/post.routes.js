@@ -5,7 +5,7 @@ import createPost, { getPosts } from "../controllers/post.controllers.js"
 
 const postRouter = express.Router()
 
-postRouter.get("/create", isAuth, Upload.single("image"), createPost)
+postRouter.post("/create", isAuth, Upload.single("image"), createPost)
 postRouter.get("/all", isAuth, getPosts)
 
 export default postRouter
