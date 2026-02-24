@@ -1,3 +1,4 @@
+// import React, { useId } from "react"
 import UploadOnCloudinary from "../db/cloudinary.js"
 import Post from "../models/post.models.js"
 
@@ -37,5 +38,44 @@ export const getPosts = async (req, res) => {
         return res.status(500).json({ message: "Get Posts Error..." })
     }
 }
+
+export const like = async (req, res) => {
+    try {
+        const postId = req.params.id
+        const userId = req.userId
+        const post = await Post.findById(postId)
+        if (!post) {
+            return res.json({ message: "Post not found" })
+        }
+        if (post.like.includes(userId)) {
+            post.like = post.like.filter((id) => id != userId)
+        } else {
+            post.like.push(userId)
+        }
+        post.save()
+
+        return res.status(200).json(post)
+    } catch (error) {
+        return res.status(500).json({ message: error })
+    }
+}
+
+export const comment = async (req, res) => {
+    try {
+        const postId = req.params.id
+        const userId = req.userId
+        const { content } = req.body
+        const post = await Post.findByIdAndUpdate(postId, {
+            $push: { comment: { content, user: userId } }
+        }, { new: true })
+            .populate("comment.user", "firstName, lastName, profileImage, headline")
+            .sort({ createdAt: -1 })
+
+        return res.status(200).json(post)
+    } catch (error) {
+        return res.status(500).json({ message: error })
+    }
+}
+
 
 export default createPost

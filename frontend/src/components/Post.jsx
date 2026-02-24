@@ -1,9 +1,24 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import moment from "moment"
+import { AiOutlineLike } from "react-icons/ai"
+import { AiOutlineComment } from "react-icons/ai"
+import { AuthDatacontext } from "../contexts/Authcontext.jsx"
+import axios from "axios"
 
 
 const Post = ({ id, image, discription, author, like, comment, createdAt }) => {
     const [readmore, Setreadmore] = useState(false)
+    const { serverurl } = useContext(AuthDatacontext)
+
+    const likepost = async () => {
+        try {
+            const result = await axios.get(serverurl + `/api/post/like/${id}`, {withCredentials:true})
+            console.log(result)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
 
         <>
@@ -28,6 +43,24 @@ const Post = ({ id, image, discription, author, like, comment, createdAt }) => {
                 {image && <div className="w-full h-[300px] overflow-hidden flex justify-center">
                     <img src={image} alt="" />
                 </div>}
+                <div>
+                    <div className="w-full justify-between items-center p-[20px] flex border-b-2">
+                        <div className="flex items-center justify-center gap-[5px] text-[18px]">
+                            <AiOutlineLike className="text-[#1ebbff] w-[20px] h-[20px]" /> <span>{like.length}</span>
+                        </div>
+                        <div className="flex items-center justify-center gap-[5px] text-[19px]">
+                            <span>{comment.length}</span> comment
+                        </div>
+                    </div>
+
+                    <div className="w-full flex gap-[20px] p-[20px]">
+                        <div className="flex items-center justify-center gap-[5px] text-[19px] font-semibold" onClick={likepost}><AiOutlineLike className="w-[24px] h-[24px]" /> <span>Like</span></div>
+
+                        <div>
+                            <div className="flex items-center justify-center gap-[5px] text-[19px] font-semibold"><AiOutlineComment className="w-[24px] h-[24px]" /><span>comment</span></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
     )
