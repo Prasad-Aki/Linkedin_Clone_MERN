@@ -2,22 +2,51 @@ import React, { useContext, useState } from "react"
 import moment from "moment"
 import { AiOutlineLike } from "react-icons/ai"
 import { AiOutlineComment } from "react-icons/ai"
+import { AiFillLike } from "react-icons/ai"
+import { IoMdSend } from "react-icons/io"
 import { AuthDatacontext } from "../contexts/Authcontext.jsx"
 import axios from "axios"
+import { userDataContext } from "../contexts/UserContext.jsx"
+import { useEffect } from "react"
 
 
 const Post = ({ id, image, discription, author, like, comment, createdAt }) => {
     const [readmore, Setreadmore] = useState(false)
     const { serverurl } = useContext(AuthDatacontext)
+    const [likes, Setlikes] = useState(like || [])
+    const { UserData, getpostData } = useContext(userDataContext)
+    const [commentContent, SetcommentContent] = useState("")
+    const [comments, Setcomments] = useState(comment || [])
+    const [showComments, SetshowComments] = useState(false)
 
     const likepost = async () => {
         try {
-            const result = await axios.get(serverurl + `/api/post/like/${id}`, {withCredentials:true})
-            console.log(result)
+            const result = await axios.get(serverurl + `/api/post/like/${id}`, { withCredentials: true })
+            Setlikes(result.data.like)
         } catch (error) {
             console.log(error)
         }
     }
+
+    useEffect(() => {
+        getpostData()
+    }, [likes, Setlikes, comments])
+
+    const handelComment = async (e) => {
+        e.preventDefault()
+        try {
+            const result = await axios.post(serverurl + `/api/post/comment/${id}`, {
+                content: commentContent
+            }, { withCredentials: true })
+            Setcomments(result.data.comment)
+            console.log(result.data.comment)
+            SetcommentContent("")
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
 
     return (
 
@@ -46,20 +75,55 @@ const Post = ({ id, image, discription, author, like, comment, createdAt }) => {
                 <div>
                     <div className="w-full justify-between items-center p-[20px] flex border-b-2">
                         <div className="flex items-center justify-center gap-[5px] text-[18px]">
-                            <AiOutlineLike className="text-[#1ebbff] w-[20px] h-[20px]" /> <span>{like.length}</span>
+                            <AiOutlineLike className="text-[#1ebbff] w-[20px] h-[20px]" /> <span>{likes.length}</span>
                         </div>
-                        <div className="flex items-center justify-center gap-[5px] text-[19px]">
-                            <span>{comment.length}</span> comment
+                        <div className="flex items-center justify-center gap-[5px] text-[19px] cursor-pointer" onClick={() => { SetshowComments(prev => !prev) }}>
+                            <span>{comments.length}</span> comment
                         </div>
                     </div>
 
                     <div className="w-full flex gap-[20px] p-[20px]">
-                        <div className="flex items-center justify-center gap-[5px] text-[19px] font-semibold" onClick={likepost}><AiOutlineLike className="w-[24px] h-[24px]" /> <span>Like</span></div>
-
-                        <div>
-                            <div className="flex items-center justify-center gap-[5px] text-[19px] font-semibold"><AiOutlineComment className="w-[24px] h-[24px]" /><span>comment</span></div>
+                        <div
+                            className="flex items-center gap-[5px] text-[19px] font-semibold cursor-pointer"
+                            onClick={likepost}
+                        >
+                            {likes.includes(UserData._id) ? (
+                                <AiFillLike className="text-[#07a4ff] w-[24px] h-[24px]" />
+                            ) : (
+                                <AiOutlineLike className=" w-[24px] h-[24px]" />
+                            )}
+                            <span>
+                                {likes.includes(UserData._id) ? "Liked" : "Like"}
+                            </span>
                         </div>
+                        <div>
+                            <div className="flex items-center justify-center gap-[5px] text-[19px] font-semibold cursor-pointer" onClick={() => { SetshowComments(prev => !prev) }}><AiOutlineComment className="w-[24px] h-[24px]" /><span>comment</span></div>
+                        </div>
+
                     </div>
+                    {showComments && <div>
+                        <form onSubmit={handelComment} className="w-full flex justify-between items-center border-b-2 p-[10px]">
+                            <input type="text" className="outline-none border-none w-full" placeholder="leave a comment" onChange={(e) => { SetcommentContent(e.target.value) }} value={commentContent} />
+                            <button><IoMdSend className="w-[24px] h-[24px] text-[#07a4ff] " /></button>
+
+                        </form>
+                        <div className="flex flex-col gap-[20px]">
+                            {comments.map((com) => (
+                                <div key={com._id} className="border-b pb-2">
+                                    <div className="w-full flex justify-start p-[10px] cursor-pointer gap-[10px]">
+                                        <div className="w-[40px] h-[40px] rounded-full overflow-hidden flex items-center justify-center">
+                                            <img className="w-full h-full object-cover" src={com?.user?.profileImage} alt="" />
+                                        </div>
+                                        <div className="text-[15px] font-semibold text-gray-700 flex items-center">{com?.user?.firstName} {com?.user?.lastName}</div>
+                                        <div className="flex items-center">
+                                            {moment(com.createdAt).fromNow()}
+                                        </div>
+                                    </div>
+                                    <div className="pl-[30px]">{com.content}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>}
                 </div>
             </div>
         </>

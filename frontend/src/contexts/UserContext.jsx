@@ -27,7 +27,7 @@ function UserContext({ children }) {
         try {
             const result = await axios.get(serverurl + "/api/post/all", { withCredentials: true })
             console.log(result)
-            
+
             SetpostData(result.data)
         } catch (error) {
             console.log(error)
@@ -39,7 +39,7 @@ function UserContext({ children }) {
         getpostData()
     }, [])
 
-    const value = { UserData, SetUserData, edit, Setedit, postData, SetpostData }   
+    const value = { UserData, SetUserData, edit, Setedit, postData, SetpostData, getpostData }
     return (
         <>
             <userDataContext.Provider value={value}>

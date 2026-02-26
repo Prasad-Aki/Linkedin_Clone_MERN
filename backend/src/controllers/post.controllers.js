@@ -29,7 +29,8 @@ const createPost = async (req, res) => {
 export const getPosts = async (req, res) => {
     try {
         const posts = await Post.find()
-            .populate("author")
+            .populate("author", "firstName lastName profileImage headline")
+            .populate("comment.user", "firstName lastName profileImage headline")
             .sort({ createdAt: -1 })
 
         return res.status(200).json(posts)
@@ -68,7 +69,7 @@ export const comment = async (req, res) => {
         const post = await Post.findByIdAndUpdate(postId, {
             $push: { comment: { content, user: userId } }
         }, { new: true })
-            .populate("comment.user", "firstName, lastName, profileImage, headline")
+            .populate("comment.user", "firstName lastName profileImage headline")
             .sort({ createdAt: -1 })
 
         return res.status(200).json(post)
@@ -76,6 +77,5 @@ export const comment = async (req, res) => {
         return res.status(500).json({ message: error })
     }
 }
-
 
 export default createPost
