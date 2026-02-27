@@ -1,5 +1,5 @@
-import Connection from "../models/connection.models"
-import User from "../models/user.models"
+import Connection from "../models/connection.models.js"
+import User from "../models/user.models.js"
 
 const connection = async (req, res) => {
     try {
@@ -75,5 +75,81 @@ export const rejectConnection = async (req, res) => {
     }
 }
 
+export const getConnectionStatus = async (req, res) => {
+    try {
+        const currentUserId = req.userId
+        const targetUserId = req.params.userId
+
+        const currentUser = await User.findById(currentUserId)
+        if (currentUser.connection.includes(targetUserId)) {
+            return res.json({ status: "disconnected" })
+        }
+        const pendingRequest = await Connection.findOne({
+            $or: [
+                { sender: currentUserId, receiver: targetUserId },
+                { sender: targetUserId, receiver: currentUserId }
+            ],
+            status: "pending"
+        })
+        if (pendingRequest) {
+            if (pendingRequest.sender.toString() === currentUserId.toString()) {
+                return res.json({ status: "pending" })
+            } else {
+                return res.json({ status: "received", requestId: pendingRequest._id })
+            }
+        }
+
+        return res.json({ status: "connect" })
+    } catch (error) {
+        return res.json({ message: "getStatuConnection error" })
+    }
+}
+
+export const removeConnection = async (req, res) => {
+    try {
+        const myId = req.userId;
+        const otherUserId = req.params.userId;
+
+        await User.findByIdAndUpdate(myId, {
+            $pull: { connection: otherUserId }
+        });
+
+        await User.findByIdAndUpdate(otherUserId, {
+            $pull: { connection: myId }
+        });
+
+        return res.json({ message: "Connection removed successfully" });
+    } catch (error) {
+        return res.status(500).json({ message: "removeConnection error" });
+    }
+}
+
+export const getconnectionrequests = async (req, res) => {
+    try {
+        const userId = req.userId
+        const requests = await Connection.find({ receiver: userId, status: "pending" }).populate("sender", "firstName lastName userName profileImage, headline")
+        return res.status(200).json(requests)
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "get connection requests error" })
+    }
+}
+
+export const getUserConnections = async (req, res) => {
+    try {
+        const userId = req.userId;
+
+        const user = await User.findById(userId).populate(
+            "connection",
+            "firstName lastName userName profileImage headline connection"
+        );
+
+        return res.status.json(user.connection);
+    } catch (error) {
+        console.error("Error in getUserConnections controller:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+};
 
 export default connection
