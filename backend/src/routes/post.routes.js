@@ -7,7 +7,7 @@ const postRouter = express.Router()
 
 postRouter.post("/create", isAuth, Upload.single("image"), createPost)
 postRouter.get("/all", isAuth, getPosts)
-postRouter.get("/like/:id", isAuth, like)
+postRouter.post("/like/:id", isAuth, like)
 postRouter.post("/comment/:id", isAuth, comment)
 
 export default postRouter

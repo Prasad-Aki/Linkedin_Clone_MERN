@@ -1,4 +1,5 @@
 // import React, { useId } from "react"
+import { io } from "../../index.js"
 import UploadOnCloudinary from "../db/cloudinary.js"
 import Post from "../models/post.models.js"
 
@@ -9,7 +10,6 @@ const createPost = async (req, res) => {
         if (req.file) {
             const image = await UploadOnCloudinary(req.file.path)
             newPost = await Post.create({
-
                 author: req.userId,
                 discription,
                 image
@@ -53,7 +53,8 @@ export const like = async (req, res) => {
         } else {
             post.like.push(userId)
         }
-        post.save()
+        await post.save()
+        io.emit("likeUpdated", { postId, likes: post.like })
 
         return res.status(200).json(post)
     } catch (error) {
