@@ -4,7 +4,7 @@ import connection, { acceptConnection, getconnectionrequests, getConnectionStatu
 
 const connectionRouter = express.Router()
 
-connectionRouter.get("/send/:id", isAuth, connection)
+connectionRouter.post("/send/:id", isAuth, connection)
 connectionRouter.get("/accept/:connectionId", isAuth, acceptConnection)
 connectionRouter.get("/reject/:connectionId", isAuth, rejectConnection)
 connectionRouter.get("/getstatus/:userId", isAuth, getConnectionStatus)

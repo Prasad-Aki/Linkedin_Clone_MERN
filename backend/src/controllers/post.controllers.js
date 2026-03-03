@@ -1,5 +1,4 @@
 // import React, { useId } from "react"
-import { io } from "../../index.js"
 import UploadOnCloudinary from "../db/cloudinary.js"
 import Post from "../models/post.models.js"
 
@@ -46,7 +45,7 @@ export const like = async (req, res) => {
         const userId = req.userId
         const post = await Post.findById(postId)
         if (!post) {
-            return res.json({ message: "Post not found" })
+            return res.status(404).json({ message: "Post not found" })
         }
         if (post.like.includes(userId)) {
             post.like = post.like.filter((id) => id != userId)
@@ -54,7 +53,6 @@ export const like = async (req, res) => {
             post.like.push(userId)
         }
         await post.save()
-        io.emit("likeUpdated", { postId, likes: post.like })
 
         return res.status(200).json(post)
     } catch (error) {

@@ -8,11 +8,7 @@ import { AuthDatacontext } from "../contexts/Authcontext.jsx"
 import axios from "axios"
 import { userDataContext } from "../contexts/UserContext.jsx"
 import { useEffect } from "react"
-import { io } from "socket.io-client"
 
-const socket = io("http://localhost:3000", {
-    withCredentials: true
-})
 
 const Post = ({ id, image, discription, author, like, comment, createdAt }) => {
     const [readmore, Setreadmore] = useState(false)
@@ -25,23 +21,12 @@ const Post = ({ id, image, discription, author, like, comment, createdAt }) => {
 
     const likepost = async () => {
         try {
-            const result = await axios.get(serverurl + `/api/post/like/${id}`, { withCredentials: true })
+            const result = await axios.post(serverurl + `/api/post/like/${id}`,{}, { withCredentials: true })
             Setlikes(result.data.like)
         } catch (error) {
             console.log(error)
         }
     }
-
-    useEffect(() => {
-        socket.on("likeUpdated", ({ postId, likes }) => {
-            if (postId == id) {
-                Setlikes(likes)
-            }
-        })
-        return () => {
-            socket.off("likeUpdated")
-        }
-    }, [id])
 
     useEffect(() => {
         getpostData()

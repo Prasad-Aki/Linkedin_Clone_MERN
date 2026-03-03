@@ -82,7 +82,7 @@ export const getConnectionStatus = async (req, res) => {
 
         const currentUser = await User.findById(currentUserId)
         if (currentUser.connection.includes(targetUserId)) {
-            return res.json({ status: "disconnected" })
+            return res.json({ status: "connected" })
         }
         const pendingRequest = await Connection.findOne({
             $or: [
@@ -127,7 +127,7 @@ export const removeConnection = async (req, res) => {
 export const getconnectionrequests = async (req, res) => {
     try {
         const userId = req.userId
-        const requests = await Connection.find({ receiver: userId, status: "pending" }).populate("sender", "firstName lastName userName profileImage, headline")
+        const requests = await Connection.find({ receiver: userId, status: "pending" }).populate("sender", "firstName lastName userName profileImage headline")
         return res.status(200).json(requests)
 
     } catch (error) {
@@ -145,7 +145,7 @@ export const getUserConnections = async (req, res) => {
             "firstName lastName userName profileImage headline connection"
         );
 
-        return res.status.json(user.connection);
+        return res.status(200).json(user.connection);
     } catch (error) {
         console.error("Error in getUserConnections controller:", error);
         return res.status(500).json({ message: "Server error" });
