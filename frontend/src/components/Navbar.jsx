@@ -9,6 +9,7 @@ import { userDataContext } from "../contexts/UserContext.jsx";
 import { AuthDatacontext } from "../contexts/Authcontext.jsx";
 import { useNavigate } from "react-router-dom"
 import axios from "axios";
+import Network from "../pages/Network.jsx";
 
 function Navbar() {
 
@@ -60,7 +61,7 @@ function Navbar() {
                         <div className="w-full h-[1px] bg-gray-700"></div>
                         <div className="flex items-center justify-start w-full text-gray-600 gap-[10px]">
                             <div><FaUserGroup className="w-[23px] h-[23px]" /></div>
-                            <div>My Network</div>
+                            <div className="cursor-pointer" onClick={() => navigate("/network")}>My Network</div>
                         </div>
                         <button onClick={handelSignOut} className="w-[100%] h-[40px] rounded-full border-2 border-[#ff2d2d] text-[#ff2d2d] cursor-pointer">Sign Out</button>
                     </div>}
@@ -70,7 +71,7 @@ function Navbar() {
                         <div>Home</div>
                     </div>
 
-                    <div className="lg:flex hidden flex-col items-center justify-center text-gray-600">
+                    <div onClick={() => navigate("/network")} className="lg:flex hidden cursor-pointer flex-col items-center justify-center text-gray-600">
                         <div><FaUserGroup className="w-[23px] h-[23px]" /></div>
                         <div>My Network</div>
                     </div>

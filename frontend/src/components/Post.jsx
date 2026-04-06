@@ -48,7 +48,7 @@ const Post = ({ id, image, discription, author, like, comment, createdAt }) => {
         }
     }, [id])
 
-
+  
     useEffect(() => {
         getpostData()
     }, [likes, Setlikes, comments])
@@ -76,7 +76,7 @@ const Post = ({ id, image, discription, author, like, comment, createdAt }) => {
                 <div className="flex justify-between items-start w-full">
                     <div className="flex gap-[10px]">
                         <div className="w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center">
-                            <img className="h-full" src={author.profileImage || profile} alt="" />
+                            <img className="h-full" src={author.profileImage} alt="" />
                         </div>
 
                         <div>

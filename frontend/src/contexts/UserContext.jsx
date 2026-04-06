@@ -14,7 +14,6 @@ function UserContext({ children }) {
     const getcurrentuser = async () => {
         try {
             const result = await axios.get(serverurl + "/api/user/currentuser", { withCredentials: true })
-            console.log(result)
             SetUserData(result.data.user)
         } catch (error) {
             console.log("STATUS:", error.response?.status)
@@ -26,7 +25,6 @@ function UserContext({ children }) {
     const getpostData = async () => {
         try {
             const result = await axios.get(serverurl + "/api/post/all", { withCredentials: true })
-            console.log(result)
 
             SetpostData(result.data)
         } catch (error) {

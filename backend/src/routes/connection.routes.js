@@ -5,11 +5,11 @@ import connection, { acceptConnection, getconnectionrequests, getConnectionStatu
 const connectionRouter = express.Router()
 
 connectionRouter.post("/send/:id", isAuth, connection)
-connectionRouter.get("/accept/:connectionId", isAuth, acceptConnection)
-connectionRouter.get("/reject/:connectionId", isAuth, rejectConnection)
+connectionRouter.put("/accept/:connectionId", isAuth, acceptConnection)
+connectionRouter.put("/reject/:connectionId", isAuth, rejectConnection)
 connectionRouter.get("/getstatus/:userId", isAuth, getConnectionStatus)
-connectionRouter.get("/remove/:userId", isAuth, removeConnection)
-connectionRouter.get("/requests/", isAuth, getconnectionrequests)
+connectionRouter.delete("/remove/:userId", isAuth, removeConnection)
+connectionRouter.get("/requests", isAuth, getconnectionrequests)
 connectionRouter.get("/", isAuth, getUserConnections)
 
 export default connectionRouter

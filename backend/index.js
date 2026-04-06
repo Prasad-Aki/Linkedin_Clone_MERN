@@ -11,7 +11,7 @@ import connectionRouter from "./src/routes/connection.routes.js";
 import http from "http"
 import { Server } from "socket.io";
 
-const app = express()
+const app = express ()
 const server = http.createServer(app)
 export const io = new Server(server, {
     cors: ({
@@ -37,9 +37,9 @@ app.use("/api/connection", connectionRouter)
 export const userSocketMap = new Map()
 
 io.on("connection", (socket) => {
-    console.log("user connected", socket.id)
     socket.on("register", (userId) => {
         userSocketMap.set(userId, socket.id)
+          console.log(userSocketMap)
     })
     
     socket.on("disconnect", (socket) => {

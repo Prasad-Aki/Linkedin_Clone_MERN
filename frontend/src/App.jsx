@@ -5,6 +5,7 @@ import Signup from "./pages/Signup"
 import Login from "./pages/Login"
 import { useContext } from "react"
 import { userDataContext } from "./contexts/UserContext.jsx"
+import Network from "./pages/Network.jsx"
 
 function App() {
   const { UserData } = useContext(userDataContext)
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={UserData ? <Home /> : <Navigate to="/login" />} />
         <Route path="/signup" element={UserData ? <Navigate to="/" /> : <Signup />} />
         <Route path="/login" element={UserData ? <Navigate to="/" /> : <Login />} />
+        <Route path="/network" element={UserData ? <Network /> : <Navigate to="/login" />} />
       </Routes>
     </>
   )

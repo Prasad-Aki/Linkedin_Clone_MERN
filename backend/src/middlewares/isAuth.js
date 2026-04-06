@@ -4,10 +4,10 @@ const isAuth = async (req, res, next) => {
     try {
         const { token } = req.cookies
         if (!token) {
-            return res.status(400).json({ message: "user dosen't have token" })
+            return res.status(401).json({ message: "user dosen't have token" })
         }
 
-        const verifyToken = await jwt.verify(token, process.env.JWT_SECRET)
+        const verifyToken = jwt.verify(token, process.env.JWT_SECRET)
         if (!verifyToken) {
             return res.status(400).json({ message: "user dosen't have valid token" })
         }

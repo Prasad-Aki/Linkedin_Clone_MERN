@@ -3,6 +3,7 @@ import User from "../models/user.models.js"
 import { io } from "../../index.js"
 import { userSocketMap } from "../../index.js"
 
+
 const connection = async (req, res) => {
     try {
         const { id } = req.params
@@ -129,6 +130,8 @@ export const getConnectionStatus = async (req, res) => {
         }
 
         return res.json({ status: "connect" })
+
+        
     } catch (error) {
         return res.json({ message: "getStatuConnection error" })
     }
@@ -167,12 +170,17 @@ export const removeConnection = async (req, res) => {
 export const getconnectionrequests = async (req, res) => {
     try {
         const userId = req.userId
-        const requests = await Connection.find({ receiver: userId, status: "pending" }).populate("sender", "firstName lastName userName profileImage headline")
+        const requests = await Connection.find({ receiver: userId, status: "pending" })
+        
+console.log("REQUEST COUNT:", requests.length)
+console.log("FIRST ITEM:", requests[0])
         return res.status(200).json(requests)
+        
 
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "get connection requests error" })
+
     }
 }
 
@@ -190,6 +198,6 @@ export const getUserConnections = async (req, res) => {
         console.error("Error in getUserConnections controller:", error);
         return res.status(500).json({ message: "Server error" });
     }
-};
+}
 
 export default connection
