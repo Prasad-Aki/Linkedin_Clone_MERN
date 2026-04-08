@@ -9,7 +9,7 @@ connectionRouter.put("/accept/:connectionId", isAuth, acceptConnection)
 connectionRouter.put("/reject/:connectionId", isAuth, rejectConnection)
 connectionRouter.get("/getstatus/:userId", isAuth, getConnectionStatus)
 connectionRouter.delete("/remove/:userId", isAuth, removeConnection)
-connectionRouter.get("/requests", isAuth, getconnectionrequests)
+connectionRouter.get("/requests",isAuth, getconnectionrequests)
 connectionRouter.get("/", isAuth, getUserConnections)
 
 export default connectionRouter

@@ -170,17 +170,14 @@ export const removeConnection = async (req, res) => {
 export const getconnectionrequests = async (req, res) => {
     try {
         const userId = req.userId
-        const requests = await Connection.find({ receiver: userId, status: "pending" })
-        
-console.log("REQUEST COUNT:", requests.length)
-console.log("FIRST ITEM:", requests[0])
+        const requests = await Connection.find({
+            receiver: userId,
+            status: "pending"
+        }).populate("sender", "firstName lastName userName profileImage")
         return res.status(200).json(requests)
-        
 
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ message: "get connection requests error" })
-
     }
 }
 
@@ -191,7 +188,7 @@ export const getUserConnections = async (req, res) => {
         const user = await User.findById(userId).populate(
             "connection",
             "firstName lastName userName profileImage headline connection"
-        );
+        )
 
         return res.status(200).json(user.connection);
     } catch (error) {
