@@ -71,11 +71,11 @@ export const acceptConnection = async (req, res) => {
         const senderSocketid = userSocketMap.get(connection.sender._id.toString())
 
         if (receiverSocketId) {
-            io.to(receiverSocketId).emit("statusupdate", { updatedUserId: connection.sender._id, newStatus: "disconnect" })
+            io.to(receiverSocketId).emit("statusupdate", { updatedUserId: connection.sender._id, newStatus: "connected" })
         }
 
         if (senderSocketid) {
-            io.to(senderSocketid).emit("statusupdate", { updatedUserId: connection.receiver._id, newStatus: "disconnect" })
+            io.to(senderSocketid).emit("statusupdate", { updatedUserId: connection.receiver._id, newStatus: "connected" })
         }
 
 
