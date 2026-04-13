@@ -39,7 +39,7 @@ function Navbar() {
                     <div onClick={() => {
                         Setactivesearch(false)
                     }}>
-                        <img src={logo} alt="" />
+                        <img src={logo} alt="" className="cursor-pointer" onClick={() => {navigate("/")}}/>
                     </div>
                     <div ><CiSearch onClick={() => { Setactivesearch(true) }} className="w-[25px] h-[25px] text-gray-700 lg:hidden" /></div>
                     <form className={` w-[200px] lg:w-[350px] h-[40px] bg-[#f0efe7] lg:flex items-center gap-[10px] px-[10px] py-[5px] rounded-md ${!activesearch ? "hidden" : "flex"}`}>
@@ -57,7 +57,7 @@ function Navbar() {
                         <div className="text-[18px] font-semibold text-gray-700">
                             {UserData?.firstName} {UserData?.lastName}
                         </div>
-                        <button className="w-[100%] h-[40px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] cursor-pointer">View Profile</button>
+                        <button onClick={() => {navigate("/profilepage")}} className="w-[100%] h-[40px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] cursor-pointer">View Profile</button>
                         <div className="w-full h-[1px] bg-gray-700"></div>
                         <div className="flex items-center justify-start w-full text-gray-600 gap-[10px]">
                             <div><FaUserGroup className="w-[23px] h-[23px]" /></div>

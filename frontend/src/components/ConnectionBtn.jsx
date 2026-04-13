@@ -26,7 +26,7 @@ const ConnectionBtn = ({ userId }) => {
     const handelremoveBtn = async () => {
         try {
             
-            const result = await axios.delete(`${serverurl}/api/connection/remove/${userId}`, {}, { withCredentials: true })
+            const result = await axios.delete(`${serverurl}/api/connection/remove/${userId}`, { withCredentials: true })
         } catch (error) {
             console.log(error)
         }
@@ -58,7 +58,7 @@ const ConnectionBtn = ({ userId }) => {
     }, [UserData._id])
 
     const handelClick = async () => {
-        if (status == "disconnect") {
+        if (status == "connected") {
             await handelremoveBtn()
         } else if (status == "received") {
             navigate("/network")
