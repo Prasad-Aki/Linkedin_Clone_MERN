@@ -6,11 +6,13 @@ import { IoCameraOutline } from "react-icons/io5"
 import { AuthDatacontext } from "../contexts/Authcontext"
 import axios from "axios"
 import EditProfile from "../components/EditProfile"
+import Post from "../components/Post.jsx"
 
 
 function Profilepage() {
     const { UserData, SetUserData, edit, Setedit, postData, SetpostData } = useContext(userDataContext)
     const [userConnection, SetuserConnection] = useState([])
+    const [profilePost, SetprofilePost] = useState([])
     let { serverurl } = useContext(AuthDatacontext)
 
     const handleGetUserConnection = async () => {
@@ -26,12 +28,16 @@ function Profilepage() {
         handleGetUserConnection()
     }, [])
 
+    useEffect(() => {
+        SetprofilePost(postData.filter((post) => post.author._id == UserData._id))
+    }, [])
+
     return (
 
         <div className="w-full min-h-[100vh] pt-[100px] bg-[#f0efe7] flex flex-col items-center">
             <Navbar />
             {edit && <EditProfile />}
-            <div className="w-full  max-w-[900px] min-h-[100vh]">
+            <div className="w-full  max-w-[900px] min-h-[100vh] flex flex-col  mb-[40px] gap-[20px]">
                 <div className="relative bg-white pb-[40px] rounded-lg shadow-lg">
                     <div onClick={() => { Setedit(true) }} className="w-[100%] h-[200px] bg-gray-500 overflow-hidden flex items-start relative cursor-pointer items-center justify-center">
                         <img src={UserData.coverImage || ""} alt="" className="w-full h-full object-cover" />
@@ -48,7 +54,44 @@ function Profilepage() {
                     <button className="w-[150px] h-[40px] mt-[10px] my-[20px] ml-[20px] flex items-center justify-center gap-[20px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] cursor-pointer" onClick={() => { Setedit(true) }}>Edit Profile <FaPencilAlt />
                     </button>
                 </div>
+                <div className="w-full h-[100px] bg-white rounded-lg shadow-lg flex items-center p-[20px] text-[22px] text-gray-600 font-semibold">{`Post (${profilePost.length})`}</div>
+                {profilePost.map((post, index) => (
+                    <Post key={index}
+                        id={post._id}
+                        image={post.image}
+                        discription={post.discription}
+                        author={post.author}
+                        like={post.like}
+                        comment={post.comment} />
+                ))}
+                {UserData.skills.length > 0 && (
+                    <div className="w-full flex flex-col gap-3 bg-white rounded-lg shadow-lg p-5 font-semibold">
+                        <div className="text-[22px] text-gray-600">Skills</div>
+                        {UserData.skills.map((skill, index) => (
+                            <div key={index} className="flex flex-col">
+                                <span>{skill}</span>
+                                <hr className="border-t border-gray-300 mt-2" />
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {UserData.education.length > 0 && (
+                    <div className="w-full flex flex-col gap-3 bg-white rounded-lg shadow-lg p-5 font-semibold">
+                        <div className="text-[22px] text-gray-600">Education</div>
+                        {UserData.education.map((edu, index) => (
+                            <div key={index} className="flex flex-col">
+                                <span className=""><span className="text-gray-600">College : </span>{edu.college}</span>
+                                <span className=""><span className="text-gray-600">Degree : </span>{edu.degree}</span>
+                                <span className=""><span className="text-gray-600">Field Of Study : </span>{edu.fieldOfStudy}</span>
+                                <hr className="border-t border-gray-300 mt-2" />
+                            </div>
+                        ))}
+                    </div>
+                )}
+
             </div>
+
         </div>
     )
 }
