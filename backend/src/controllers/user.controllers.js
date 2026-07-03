@@ -24,11 +24,11 @@ export const UpdateProfile = async (req, res) => {
         let experience = req.body.experience ? JSON.parse(req.body.experience) : []
 
         if (req.files?.profileImage) {
-            profileImage = await UploadOnCloudinary(req.files.profileImage[0].path)
+            profileImage = await UploadOnCloudinary(req.files.profileImage[0].buffer)
         }
 
         if (req.files?.coverImage) {
-            coverImage = await UploadOnCloudinary(req.files.coverImage[0].path)
+            coverImage = await UploadOnCloudinary(req.files.coverImage[0].buffer)
         }
 
 
@@ -108,8 +108,8 @@ export const getSuggestions = async (req, res) => {
         const suggestions = await User.find({
             _id: { $nin: Array.from(excludedUserIds) }
         })
-        .select("firstName lastName userName profileImage headline")
-        .limit(3)
+            .select("firstName lastName userName profileImage headline")
+            .limit(3)
 
         return res.status(200).json(suggestions)
     } catch (error) {
