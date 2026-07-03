@@ -9,7 +9,9 @@ const createPost = async (req, res) => {
         const { description } = req.body
         let newPost
         if (req.file) {
-            const image = await UploadOnCloudinary(req.file.path)
+            const image = req.file
+                ? await UploadOnCloudinary(req.file.buffer)
+                : ""
             newPost = await Post.create({
                 author: req.userId,
                 description,
@@ -127,7 +129,7 @@ export const deletePost = async (req, res) => {
         if (post.author.toString() !== req.userId) {
             return res.status(403).json({ message: "Unauthorized to delete this post" })
         }
-        
+
         await Post.findByIdAndDelete(postId)
         return res.status(200).json({ message: "Post deleted successfully" })
     } catch (error) {
@@ -146,7 +148,7 @@ export const editPost = async (req, res) => {
         if (post.author.toString() !== req.userId) {
             return res.status(403).json({ message: "Unauthorized to edit this post" })
         }
-        
+
         post.description = description
         await post.save()
         return res.status(200).json(post)

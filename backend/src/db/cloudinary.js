@@ -1,26 +1,26 @@
-import { v2 as cloudinary } from 'cloudinary'
-import fs from 'fs'
+import { v2 as cloudinary } from "cloudinary";
+import streamifier from "streamifier";
 
-const UploadOnCloudinary = async (filepath) => {
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-    // Configuration
-    cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET
-    })
+const UploadOnCloudinary = (buffer) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder: "linkedin-clone",
+            },
+            (error, result) => {
+                if (error) return reject(error);
+                resolve(result.secure_url);
+            }
+        );
 
-    try {
-        if (!filepath) {
-            return null
-        }
-        const uploadImage = await cloudinary.uploader.upload(filepath)
-        fs.unlinkSync(filepath)
-        return uploadImage.secure_url
-    } catch (error) {
-        fs.unlinkSync(filepath)
-        console.log(error)
-    }
-}
+        streamifier.createReadStream(buffer).pipe(stream);
+    });
+};
 
-export default UploadOnCloudinary
+export default UploadOnCloudinary;
