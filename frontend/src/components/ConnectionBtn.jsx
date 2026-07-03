@@ -18,6 +18,7 @@ const ConnectionBtn = ({ userId }) => {
     const handelsendBtn = async () => {
         try {
             const result = await axios.post(`${serverurl}/api/connection/send/${userId}`, {}, { withCredentials: true })
+            Setstatus("pending")
         } catch (error) {
             console.log(error)
         }
@@ -25,8 +26,8 @@ const ConnectionBtn = ({ userId }) => {
 
     const handelremoveBtn = async () => {
         try {
-            
             const result = await axios.delete(`${serverurl}/api/connection/remove/${userId}`, { withCredentials: true })
+            Setstatus("connect")
         } catch (error) {
             console.log(error)
         }
@@ -49,13 +50,19 @@ const ConnectionBtn = ({ userId }) => {
         socket.emit("register", UserData._id)
         handelGetStatus()
 
-        socket.on("statusUpdate", ({ updatedUserId, newStatus }) => {
+        const handleStatus = ({ updatedUserId, newStatus }) => {
             if (updatedUserId == userId) {
                 Setstatus(newStatus)
             }
-        })
+        }
 
-    }, [UserData._id])
+        socket.on("statusupdate", handleStatus)
+
+        return () => {
+            socket.off("statusupdate", handleStatus)
+        }
+
+    }, [UserData._id, userId])
 
     const handelClick = async () => {
         if (status == "connected") {

@@ -13,14 +13,40 @@ import ConnectionBtn from "./ConnectionBtn.jsx"
 
 const socket = io("http://localhost:3000")
 
-const Post = ({ id, image, discription, author, like, comment, createdAt }) => {
+import { BsThreeDots } from "react-icons/bs"
+
+const Post = ({ id, image, description, author, like, comment, createdAt }) => {
     const [readmore, Setreadmore] = useState(false)
     const { serverurl } = useContext(AuthDatacontext)
     const [likes, Setlikes] = useState(like || [])
-    const { UserData, getpostData } = useContext(userDataContext)
+    const { UserData, getpostData, handlegetProfile } = useContext(userDataContext)
     const [commentContent, SetcommentContent] = useState("")
     const [comments, Setcomments] = useState(comment || [])
     const [showComments, SetshowComments] = useState(false)
+    const [isEditing, SetisEditing] = useState(false)
+    const [editContent, SeteditContent] = useState(description)
+    const [showMenu, SetshowMenu] = useState(false)
+
+    const handleDeletePost = async () => {
+        try {
+            if (window.confirm("Are you sure you want to delete this post?")) {
+                await axios.delete(`${serverurl}/api/post/delete/${id}`, { withCredentials: true })
+                getpostData()
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleEditPost = async () => {
+        try {
+            await axios.put(`${serverurl}/api/post/edit/${id}`, { description: editContent }, { withCredentials: true })
+            SetisEditing(false)
+            getpostData()
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const likepost = async () => {
         try {
@@ -50,8 +76,12 @@ const Post = ({ id, image, discription, author, like, comment, createdAt }) => {
 
   
     useEffect(() => {
-        getpostData()
-    }, [likes, Setlikes, comments])
+        Setlikes(like || [])
+    }, [like])
+
+    useEffect(() => {
+        Setcomments(comment || [])
+    }, [comment])
 
     const handelComment = async (e) => {
         e.preventDefault()
@@ -74,7 +104,7 @@ const Post = ({ id, image, discription, author, like, comment, createdAt }) => {
         <>
             <div className="w-full min-h-[200px] bg-white rounded-lg p-[20px] flex flex-col gap-[10px]">
                 <div className="flex justify-between items-start w-full">
-                    <div className="flex gap-[10px]">
+                    <div className="flex gap-[10px] cursor-pointer" onClick={() => handlegetProfile(author?.userName)} >
                         <div className="w-[70px] h-[70px] rounded-full overflow-hidden flex items-center justify-center">
                             <img className="h-full" src={author.profileImage} alt="" />
                         </div>
@@ -91,14 +121,74 @@ const Post = ({ id, image, discription, author, like, comment, createdAt }) => {
                             </div>
                         </div>
                     </div>
-
-                    <div>
-                        {UserData._id != author._id && <ConnectionBtn userId={author._id} />}  
+                    <div className="flex gap-[10px] items-center relative">
+                        {UserData._id != author._id ? (
+                            <ConnectionBtn userId={author._id} />
+                        ) : (
+                            <div className="relative">
+                                <BsThreeDots 
+                                    className="w-[22px] h-[22px] text-gray-500 cursor-pointer hover:text-gray-700" 
+                                    onClick={() => SetshowMenu(prev => !prev)} 
+                                />
+                                {showMenu && (
+                                    <div className="absolute right-0 mt-2 w-[120px] bg-white border rounded shadow-md z-[50]">
+                                        <button 
+                                            className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-gray-700"
+                                            onClick={() => {
+                                                SetisEditing(true)
+                                                SetshowMenu(false)
+                                            }}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button 
+                                            className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-red-600"
+                                            onClick={() => {
+                                                handleDeletePost()
+                                                SetshowMenu(false)
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}  
                     </div>
 
                 </div>
-                <div className={`w-full ${!readmore ? "max-h-[70px] overflow-hidden" : ""} overflow-hidden`}>{discription}</div>
-                <div className="font-semibold cursor-pointer" onClick={() => { Setreadmore(prev => !prev) }}>{readmore ? "read less..." : "read more..."}</div>
+                {isEditing ? (
+                    <div className="w-full flex flex-col gap-2 mt-2">
+                        <textarea 
+                            className="w-full border rounded p-2 text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500" 
+                            rows={3}
+                            value={editContent}
+                            onChange={(e) => SeteditContent(e.target.value)}
+                        />
+                        <div className="flex gap-2 justify-end">
+                            <button 
+                                className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded text-sm font-semibold"
+                                onClick={() => {
+                                    SetisEditing(false)
+                                    SeteditContent(description)
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm font-semibold"
+                                onClick={handleEditPost}
+                            >
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        <div className={`w-full ${!readmore ? "max-h-[70px] overflow-hidden" : ""} overflow-hidden`}>{description}</div>
+                        <div className="font-semibold cursor-pointer" onClick={() => { Setreadmore(prev => !prev) }}>{readmore ? "read less..." : "read more..."}</div>
+                    </>
+                )}
                 {image && <div className="w-full h-[300px] overflow-hidden flex justify-center">
                     <img src={image} alt="" />
                 </div>}

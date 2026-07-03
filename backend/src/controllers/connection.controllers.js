@@ -2,6 +2,7 @@ import Connection from "../models/connection.models.js"
 import User from "../models/user.models.js"
 import { io } from "../../index.js"
 import { userSocketMap } from "../../index.js"
+import Notification from "../models/notification.models.js"
 
 
 const connection = async (req, res) => {
@@ -39,9 +40,24 @@ const connection = async (req, res) => {
             io.to(senderSocketid).emit("statusupdate", { updatedUserId: id, newStatus: "pending" })
         }
 
+        try {
+            const notification = await Notification.create({
+                recipient: id,
+                sender: sender,
+                type: "connection_request"
+            })
+            const populatedNotif = await notification.populate("sender", "firstName lastName profileImage headline userName")
+            if (receiverSocketId) {
+                io.to(receiverSocketId).emit("newNotification", populatedNotif)
+            }
+        } catch (err) {
+            console.error("Error creating connection request notification:", err)
+        }
+
         return res.status(200).json(newRequest)
     } catch (error) {
-
+        console.error("Error in connection request:", error)
+        return res.status(500).json({ message: "connection request error" })
     }
 }
 
@@ -78,6 +94,19 @@ export const acceptConnection = async (req, res) => {
             io.to(senderSocketid).emit("statusupdate", { updatedUserId: connection.receiver._id, newStatus: "connected" })
         }
 
+        try {
+            const notification = await Notification.create({
+                recipient: connection.sender._id,
+                sender: req.userId,
+                type: "connection_accept"
+            })
+            const populatedNotif = await notification.populate("sender", "firstName lastName profileImage headline userName")
+            if (senderSocketid) {
+                io.to(senderSocketid).emit("newNotification", populatedNotif)
+            }
+        } catch (err) {
+            console.error("Error creating connection accept notification:", err)
+        }
 
         return res.status(200).json({ message: "connection accepted" })
     } catch (error) {
@@ -89,7 +118,7 @@ export const rejectConnection = async (req, res) => {
     try {
         const { connectionId } = req.params
         const connection = await Connection.findById(connectionId)
-        if (!connectionId) {
+        if (!connection) {
             return res.status(400).json({ message: "connection doesn't exist" })
         }
         if (connection.status != "pending") {
@@ -178,6 +207,7 @@ export const getconnectionrequests = async (req, res) => {
 
     } catch (error) {
         console.log(error)
+        return res.status(500).json({ message: "get connection requests error" })
     }
 }
 

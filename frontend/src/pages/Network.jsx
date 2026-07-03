@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react"
 import Navbar from "../components/Navbar"
 import { AuthDatacontext } from "../contexts/Authcontext"
+import { userDataContext } from "../contexts/UserContext.jsx"
 import axios from "axios"
 import profile from "../assets/profile.jpg"
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
@@ -8,6 +9,7 @@ import { RxCrossCircled } from "react-icons/rx";
 
 function Network() {
     let { serverurl } = useContext(AuthDatacontext)
+    const { getcurrentuser } = useContext(userDataContext)
     let [connections, Setconnections] = useState([])
 
     const handleGetRequest = async () => {
@@ -23,6 +25,7 @@ function Network() {
         try {
             let result = await axios.put(`${serverurl}/api/connection/accept/${requestId}`, {}, { withCredentials: true })
             Setconnections(connections.filter(conn => conn._id !== requestId))
+            await getcurrentuser()
         } catch (error) {
             console.log(error)
         }
@@ -30,8 +33,9 @@ function Network() {
 
     const handleRejecttRequest = async (requestId) => {
         try {
-            let result = await axios.put(`${serverurl}/api/connection/reject/${requestId}`, { withCredentials: true })
+            let result = await axios.put(`${serverurl}/api/connection/reject/${requestId}`, {}, { withCredentials: true })
             Setconnections(connections.filter(conn => conn._id !== requestId))
+            await getcurrentuser()
         } catch (error) {
             console.log(error)
         }

@@ -11,14 +11,16 @@ import { FaRegImage } from "react-icons/fa6"
 import axios from "axios"
 import { AuthDatacontext } from "../contexts/Authcontext.jsx"
 import Post from "../components/Post.jsx"
+import RightSidebar from "../components/RightSidebar.jsx"
 
 function Home() {
-    const { UserData, SetUserData, edit, Setedit, postData, SetpostData } = useContext(userDataContext)
+    const { UserData, SetUserData, edit, Setedit, postData, SetpostData, getpostData } = useContext(userDataContext)
     const { serverurl } = useContext(AuthDatacontext)
-    const [discription, Setdescription] = useState("")
+    const [description, Setdescription] = useState("")
     const [frontend, Setfrontend] = useState("")
     const [backend, Setbackend] = useState("")
     const [uploadPost, SetuploadPost] = useState(false)
+    const [postLoading, SetpostLoading] = useState(false)
 
     const image = useRef()
 
@@ -30,16 +32,28 @@ function Home() {
 
     const handelUploadPOst = async () => {
         try {
+            SetpostLoading(true)
             const fromdata = new FormData()
-            fromdata.append("discription", discription)
+            fromdata.append("description", description)
             if (backend) {
                 fromdata.append("image", backend)
             }
             const result = await axios.post(serverurl + "/api/post/create", fromdata, { withCredentials: true })
             console.log(result)
+            
+            // Refresh posts feed
+            await getpostData()
+            
+            // Reset modal states
+            SetuploadPost(false)
+            Setdescription("")
+            Setfrontend("")
+            Setbackend("")
 
         } catch (error) {
             console.log(error)
+        } finally {
+            SetpostLoading(false)
         }
     }
 
@@ -75,12 +89,12 @@ function Home() {
                     </div>
                     <div className="border-1 text-gray-600"></div>
 
-                    {postData && postData.map((post, index) => (
+                    {postData && postData.map((post) => (
                         <Post
-                            key={index}
+                            key={post._id}
                             id={post._id}
                             image={post.image}
-                            discription={post.discription}
+                            description={post.description}
                             author={post.author}
                             like={post.like}
                             comment={post.comment}
@@ -88,21 +102,21 @@ function Home() {
                     ))}
                 </div>
 
-                <div className="lg:w-[25%] w-full min-h-[200px] bg-white shadow-lg">
-
-                </div>
+                <RightSidebar />
 
                 {uploadPost && <div className="w-full h-full left-0 bottom-0 right-0 bg-black opacity-[0.5] absolute flex items-center justify-center top-0 z-[100px]">
                 </div>}
                 {uploadPost && <div className="w-[90%] max-w-[500px] max-h-[90vh]  flex flex-col items-start justify-start shadow-lg absolute z-[200] rounded-2xl bg-white">
-                    <div className="absolute top-[20px] right-[15px] w-[25px] h-[25px] cursor-pointer "><ImCross className="font-bold text-gray-700" onClick={() => { SetuploadPost(false) }} /></div>
+                    <div className="absolute top-[20px] right-[15px] w-[25px] h-[25px] cursor-pointer ">
+                        {!postLoading && <ImCross className="font-bold text-gray-700" onClick={() => { SetuploadPost(false) }} />}
+                    </div>
                     <div className="flex gap-5 mt-[10px]">
                         <div className="w-[70px] h-[70px] ml-[20px]  rounded-full overflow-hidden flex items-center justify-center">
                             <img className="h-full" src={UserData.profileImage || profile} alt="" />
                         </div>
                         <p className="mt-[20px] text-2xl font-semibold">{UserData.firstName} {UserData.lastName}</p>
                     </div>
-                    <textarea placeholder="What do you want to talk about?" className={`w-full text-[19px] ${frontend ? "h-[150px]" : "h-[250px]"} p-[10px] outline-none border-none  resize-none`} value={discription} onChange={(e) => { Setdescription(e.target.value) }}></textarea>
+                    <textarea placeholder="What do you want to talk about?" className={`w-full text-[19px] ${frontend ? "h-[150px]" : "h-[250px]"} p-[10px] outline-none border-none  resize-none`} value={description} onChange={(e) => { Setdescription(e.target.value) }}></textarea>
                     <input type="file" hidden ref={image} onChange={handelPostImage} />
 
                     {frontend && (
@@ -119,7 +133,22 @@ function Home() {
 
                     <div className="w-[95%] mt-[25px] border-1 ml-[12px]"></div>
                     <div className="flex  w-full px-[20px] mt-[15px] justify-end items-center ">
-                        <button className="h-[50px] w-[100px]  rounded-full border-2 mb-5 text-white bg-[#2ddcff] cursor-pointer" onClick={handelUploadPOst}>Post</button>
+                        <button 
+                            disabled={postLoading} 
+                            className={`h-[50px] w-[100px] rounded-full border-2 mb-5 text-white font-semibold flex items-center justify-center gap-1 ${
+                                postLoading ? "bg-gray-400 cursor-not-allowed border-gray-400" : "bg-[#2ddcff] hover:bg-[#1bc5e6] cursor-pointer border-[#2ddcff]"
+                            }`} 
+                            onClick={handelUploadPOst}
+                        >
+                            {postLoading ? (
+                                <>
+                                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                    Posting
+                                </>
+                            ) : (
+                                "Post"
+                            )}
+                        </button>
 
                     </div>
                 </div>}

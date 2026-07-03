@@ -9,8 +9,9 @@ import axios from "axios"
 import { AuthDatacontext } from "../contexts/Authcontext.jsx"
 
 function EditProfile() {
-    const { edit, Setedit, UserData, SetUserData } = useContext(userDataContext)
+    const { edit, Setedit, UserData, SetUserData, getpostData } = useContext(userDataContext)
     const { serverurl } = useContext(AuthDatacontext)
+    const [loading, Setloading] = useState(false)
 
     const [firstName, SetfirstName] = useState(UserData.firstName || "")
     const [lastName, SetlastName] = useState(UserData.lastName || "")
@@ -111,6 +112,7 @@ function EditProfile() {
 
     const handelSaveProfile = async () => {
         try {
+            Setloading(true)
             const formdata = new FormData()
             formdata.append("firstName", firstName)
             formdata.append("lastName", lastName)
@@ -135,9 +137,12 @@ function EditProfile() {
             )
 
             SetUserData(result.data)
-
+            await getpostData()
+            Setedit(false)
         } catch (error) {
             console.log(error)
+        } finally {
+            Setloading(false)
         }
     }
 
@@ -148,8 +153,8 @@ function EditProfile() {
             <input type="file" accept="image/*" hidden ref={coverImage} onChange={handlecoverImage} />
 
             <div className="w-full h-full bg-black opacity-[0.5] absolute"></div>
-            <div className="w-[90%] max-w-[500px] overflow-auto shadow-lg rounded-lg h-[600px] h-[200px] bg-white absolute p-[10px] z-[200]">
-                <div className="absolute top-[10px] left-[470px] w-[25px] h-[25px] cursor-pointer " onClick={() => { Setedit(false) }}><ImCross className="font-bold text-gray-700" /></div>
+            <div className="w-[90%] max-w-[500px] overflow-auto shadow-lg rounded-lg h-[600px] bg-white absolute p-[10px] z-[200]">
+                <div className="absolute top-[10px] right-[15px] w-[25px] h-[25px] cursor-pointer " onClick={() => { Setedit(false) }}><ImCross className="font-bold text-gray-700" /></div>
 
                 <div className="w-full mt-[30px] h-[150px] rounded-lg bg-gray-500" onClick={() => { coverImage.current.click() }}>
                     <img src={frontendcoverImage} className="w-full h-full object-cover   " alt="" />
@@ -237,7 +242,20 @@ function EditProfile() {
 
                 </div>
 
-                <button className="w-[100%] mt-[50px] h-[40px] rounded-full border-2 text-white bg-[#2ddcff] cursor-pointer" onClick={() => { handelSaveProfile(), Setedit(false) }}>Save Profile</button>
+                <button 
+                    disabled={loading} 
+                    className={`w-[100%] mt-[50px] h-[40px] rounded-full border-2 text-white font-semibold flex items-center justify-center gap-2 ${loading ? "bg-gray-400 cursor-not-allowed border-gray-400" : "bg-[#2ddcff] hover:bg-[#1bc5e6] cursor-pointer border-[#2ddcff]"}`} 
+                    onClick={handelSaveProfile}
+                >
+                    {loading ? (
+                        <>
+                            <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                            Saving...
+                        </>
+                    ) : (
+                        "Save Profile"
+                    )}
+                </button>
 
             </div>
         </div>
