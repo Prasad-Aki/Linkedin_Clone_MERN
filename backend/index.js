@@ -20,14 +20,21 @@ const corsOptions = {
 
 const app = express()
 const server = http.createServer(app)
+
 export const io = new Server(server, {
-    cors: corsOptions,
+    cors: {
+        origin: process.env.CLIENT_URL,
+        credentials: true
+    }
 })
 
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors(corsOptions))
+app.use(cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true
+}))
 const port = process.env.PORT || 3000
 
 app.use("/api/auth", authrouter)
