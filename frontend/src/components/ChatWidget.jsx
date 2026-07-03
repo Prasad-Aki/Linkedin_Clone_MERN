@@ -8,7 +8,9 @@ import { IoSend } from "react-icons/io5"
 import { ImCross } from "react-icons/im"
 import { BsChatTextFill } from "react-icons/bs"
 
-const socket = io("http://localhost:3000")
+const socket = io(import.meta.env.VITE_API_URL, {
+    withCredentials: true,
+})
 
 function ChatWidget() {
     const { UserData } = useContext(userDataContext)

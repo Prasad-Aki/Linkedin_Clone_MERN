@@ -13,7 +13,9 @@ import Network from "../pages/Network.jsx";
 import { io } from "socket.io-client";
 import moment from "moment";
 
-const socket = io("http://localhost:3000");
+const socket = io(import.meta.env.VITE_API_URL, {
+    withCredentials: true,
+});
 
 function Navbar() {
 
@@ -105,15 +107,15 @@ function Navbar() {
                         Setactivesearch(false)
                         SetshowSearchDropdown(false)
                     }}>
-                        <img src={logo} alt="" className="cursor-pointer" onClick={() => {navigate("/")}}/>
+                        <img src={logo} alt="" className="cursor-pointer" onClick={() => { navigate("/") }} />
                     </div>
                     <div ><CiSearch onClick={() => { Setactivesearch(true) }} className="w-[25px] h-[25px] text-gray-700 lg:hidden" /></div>
                     <form onSubmit={(e) => e.preventDefault()} className={` w-[200px] lg:w-[350px] h-[40px] bg-[#f0efe7] lg:flex items-center gap-[10px] px-[10px] py-[5px] rounded-md ${!activesearch ? "hidden" : "flex"}`}>
                         <div ><CiSearch className="w-[25px] h-[25px] text-gray-700" /></div>
-                        <input 
-                            type="text" 
-                            placeholder="Search" 
-                            className="w-[80%] bg-transparent outline-none" 
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            className="w-[80%] bg-transparent outline-none"
                             value={searchQuery}
                             onChange={handleSearchChange}
                             onFocus={() => { if (searchQuery.trim()) SetshowSearchDropdown(true) }}
@@ -123,8 +125,8 @@ function Navbar() {
                     {showSearchDropdown && searchResults.length > 0 && (
                         <div className="absolute top-[60px] left-[10px] lg:left-[55px] w-[250px] lg:w-[350px] bg-white border border-gray-200 rounded-md shadow-lg z-[100] max-h-[300px] overflow-y-auto">
                             {searchResults.map((user) => (
-                                <div 
-                                    key={user._id} 
+                                <div
+                                    key={user._id}
                                     className="flex items-center gap-[10px] p-[10px] hover:bg-gray-100 cursor-pointer border-b last:border-0"
                                     onClick={() => {
                                         handlegetProfile(user.userName)
@@ -154,7 +156,7 @@ function Navbar() {
                         <div className="text-[18px] font-semibold text-gray-700">
                             {UserData?.firstName} {UserData?.lastName}
                         </div>
-                        <button onClick={() => {navigate(`/profile/${UserData.userName}`)}} className="w-[100%] h-[40px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] cursor-pointer">View Profile</button>
+                        <button onClick={() => { navigate(`/profile/${UserData.userName}`) }} className="w-[100%] h-[40px] rounded-full border-2 border-[#2dc0ff] text-[#2dc0ff] cursor-pointer">View Profile</button>
                         <div className="w-full h-[1px] bg-gray-700"></div>
                         <div className="flex items-center justify-start w-full text-gray-600 gap-[10px]">
                             <div><FaUserGroup className="w-[23px] h-[23px]" /></div>
@@ -193,8 +195,8 @@ function Navbar() {
                             ) : (
                                 <div className="flex flex-col gap-[10px]">
                                     {notifications.map((notif) => (
-                                        <div 
-                                            key={notif._id} 
+                                        <div
+                                            key={notif._id}
                                             className={`flex items-start gap-[10px] p-[8px] rounded-md hover:bg-gray-50 cursor-pointer ${!notif.read ? "bg-blue-50/50" : ""}`}
                                             onClick={() => {
                                                 if (notif.postRef) {

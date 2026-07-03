@@ -5,7 +5,9 @@ import io from "socket.io-client"
 import { userDataContext } from "../contexts/UserContext.jsx"
 import { useNavigate } from "react-router-dom"
 
-const socket = io("http://localhost:3000")
+const socket = io(import.meta.env.VITE_API_URL, {
+    withCredentials: true,
+})
 
 const ConnectionBtn = ({ userId }) => {
     let navigate = useNavigate()
@@ -76,7 +78,7 @@ const ConnectionBtn = ({ userId }) => {
 
     return (
         <div>
-            <button onClick={handelClick} disabled={status=="pending"} className="min-w-[100px] h-[40px] rounded-full border-2 text-[#0ccdf4] cursor-pointer">
+            <button onClick={handelClick} disabled={status == "pending"} className="min-w-[100px] h-[40px] rounded-full border-2 text-[#0ccdf4] cursor-pointer">
                 {status}
             </button>
         </div>

@@ -11,7 +11,9 @@ import { useEffect } from "react"
 import { io } from "socket.io-client"
 import ConnectionBtn from "./ConnectionBtn.jsx"
 
-const socket = io("http://localhost:3000")
+const socket = io(import.meta.env.VITE_API_URL, {
+    withCredentials: true,
+})
 
 import { BsThreeDots } from "react-icons/bs"
 
@@ -74,7 +76,7 @@ const Post = ({ id, image, description, author, like, comment, createdAt }) => {
         }
     }, [id])
 
-  
+
     useEffect(() => {
         Setlikes(like || [])
     }, [like])
@@ -126,13 +128,13 @@ const Post = ({ id, image, description, author, like, comment, createdAt }) => {
                             <ConnectionBtn userId={author._id} />
                         ) : (
                             <div className="relative">
-                                <BsThreeDots 
-                                    className="w-[22px] h-[22px] text-gray-500 cursor-pointer hover:text-gray-700" 
-                                    onClick={() => SetshowMenu(prev => !prev)} 
+                                <BsThreeDots
+                                    className="w-[22px] h-[22px] text-gray-500 cursor-pointer hover:text-gray-700"
+                                    onClick={() => SetshowMenu(prev => !prev)}
                                 />
                                 {showMenu && (
                                     <div className="absolute right-0 mt-2 w-[120px] bg-white border rounded shadow-md z-[50]">
-                                        <button 
+                                        <button
                                             className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-gray-700"
                                             onClick={() => {
                                                 SetisEditing(true)
@@ -141,7 +143,7 @@ const Post = ({ id, image, description, author, like, comment, createdAt }) => {
                                         >
                                             Edit
                                         </button>
-                                        <button 
+                                        <button
                                             className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-red-600"
                                             onClick={() => {
                                                 handleDeletePost()
@@ -153,20 +155,20 @@ const Post = ({ id, image, description, author, like, comment, createdAt }) => {
                                     </div>
                                 )}
                             </div>
-                        )}  
+                        )}
                     </div>
 
                 </div>
                 {isEditing ? (
                     <div className="w-full flex flex-col gap-2 mt-2">
-                        <textarea 
-                            className="w-full border rounded p-2 text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500" 
+                        <textarea
+                            className="w-full border rounded p-2 text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
                             rows={3}
                             value={editContent}
                             onChange={(e) => SeteditContent(e.target.value)}
                         />
                         <div className="flex gap-2 justify-end">
-                            <button 
+                            <button
                                 className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded text-sm font-semibold"
                                 onClick={() => {
                                     SetisEditing(false)
@@ -175,7 +177,7 @@ const Post = ({ id, image, description, author, like, comment, createdAt }) => {
                             >
                                 Cancel
                             </button>
-                            <button 
+                            <button
                                 className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm font-semibold"
                                 onClick={handleEditPost}
                             >
